@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreSubjectRequest;
+use App\Http\Requests\UpdateSubjectRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
 use App\Models\Category;
 use App\Models\Subject;
-use App\Models\Calorie;
 
 class SubjectsController extends Controller
 { 
@@ -25,25 +26,14 @@ class SubjectsController extends Controller
         {
             return view('subjects/create', ['categories' => Category::all()]);
         }
-
-    public function createCalories(Subject $subject)
-        {
-            $calories = Calorie::all();
-            return view('calories/create', compact('subject', 'calories'));
-        }
     
-    public function store()
+    public function store(StoreSubjectRequest $request): RedirectResponse
         {
-            $attributes = request()->validate([
-                'body' => ['required', 'min:2', 'max:255', 'unique:subjects'],
-                'category_id' => ['required']
-            ]);
+            $attributes = $request->validated();
             
-            Subject::create($attributes);
-
-            $subject_id = Subject::where('body', $attributes['body'])->first()->id;
+            $subject = Subject::create($attributes);
           
-            return redirect(route('subjects.index', '#' . $subject_id));
+            return redirect(route('subjects.index', '#' . $subject->id));
         }
 
     public function edit(Subject $subject)
@@ -53,12 +43,9 @@ class SubjectsController extends Controller
             return view('subjects/edit', compact('categories', 'subject'));
         }
 
-    public function update(Subject $subject)
+    public function update(Subject $subject, UpdateSubjectRequest $request): RedirectResponse
         {
-            $attributes = request()->validate([
-                'body' => ['required', 'min:2', 'max:255'],
-                'category_id' => ['required']
-            ]);
+            $attributes = $request->validated();
 
             $subject->update($attributes);
 

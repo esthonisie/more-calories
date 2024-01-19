@@ -2,27 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCalorieRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\models\Calorie;
 use App\Models\Subject;
 
 class CaloriesController extends Controller
 {   
-    public function store()
-        {
-            $attributes = request()->validate([
-                'product' => ['required', 'min:2', 'max:255'],
-                'subject_id' => ['required'],
-                'kcal_per_100' => ['required', 'numeric', 'integer', 'min:1', 'max:1000'],
-                'weight_g_ml' => ['required', 'numeric', 'min:1', 'max:1000']
-            ]);
-            
-            Calorie::create($attributes);
-
-            $subject_id = $attributes['subject_id'];
-          
-            return redirect(route('subjects.index', '#' . $subject_id));
-        }
+    public function store(StoreCalorieRequest $request): RedirectResponse
+    {
+        $attributes = $request->validated();
+        
+        Calorie::create($attributes);
+        
+        return redirect(route('subjects.index', '#' . $attributes['subject_id']));
+    }
 
     public function edit(Calorie $calorie)
         { 
@@ -31,28 +26,19 @@ class CaloriesController extends Controller
             return view('calories/edit', compact('calorie', 'subjects'));
         }
 
-    public function update(Calorie $calorie)
+    public function update(Calorie $calorie, StoreCalorieRequest $request): RedirectResponse
         {
-            $attributes = request()->validate([
-                'product' => ['required', 'min:2', 'max:255'],
-                'subject_id' => ['required'],
-                'kcal_per_100' => ['required', 'numeric', 'integer', 'min:1', 'max:1000'],
-                'weight_g_ml' => ['required', 'numeric', 'min:1', 'max:1000']
-            ]);
+            $attributes = $request->validated();
 
             $calorie->update($attributes);
 
-            $subject_id = $calorie->subject_id;
-
-            return redirect(route('subjects.index', '#' . $subject_id));
+            return redirect(route('subjects.index', '#' . $calorie->subject_id));
         }
 
     public function destroy(Calorie $calorie)
         {
             $calorie->delete();
 
-            $subject_id = $calorie->subject_id;
-
-            return redirect(route('subjects.index', '#' . $subject_id));
+            return redirect(route('subjects.index', '#' . $calorie->subject_id));
         }
 }

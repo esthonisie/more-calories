@@ -1,8 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\CaloriesController; 
 use App\Http\Controllers\SubjectsController;
+use App\Http\Controllers\SubjectsCaloriesController;
+use App\Http\Controllers\CaloriesController; 
 
 /*
 |--------------------------------------------------------------------------
@@ -17,51 +18,19 @@ use App\Http\Controllers\SubjectsController;
 
 // Subject
 
-Route::get(
-    '/subjects', [SubjectsController::class, 'index']
-)->name('subjects.index');
+Route::resource('subjects', SubjectsController::class);
+
+// Subject/Calorie
 
 Route::get(
-    '/subjects/create', [SubjectsController::class, 'create']
-)->name('subjects.create');
-
-Route::get(
-    '/subjects/calories/{subject}/create', [SubjectsController::class, 'createCalories']
+    '/subjects/{subject}/calories/create', [SubjectsCaloriesController::class, 'create']
 )->name('calories.create');
-
-Route::post(
-    '/subjects', [SubjectsController::class, 'store']
-)->name('subjects.store');
-
-Route::get(
-    '/subjects/{subject}/edit', [SubjectsController::class, 'edit']
-)->name('subjects.edit');
-
-Route::patch(
-    '/subjects/{subject}', [SubjectsController::class, 'update']
-)->name('subjects.update');
-
-Route::delete(
-    '/subjects/{subject}', [SubjectsController::class, 'destroy']
-)->name('subjects.destroy');
 
 // Calorie
 
-Route::post(
-    '/calories', [CaloriesController::class, 'store']
-)->name('calories.store');
-
-Route::get(
-    '/calories/{calorie}/edit', [CaloriesController::class, 'edit']
-)->name('calories.edit');
-
-Route::patch(
-    '/calories/{calorie}', [CaloriesController::class, 'update']
-)->name('calories.update');
-
-Route::delete(
-    '/calories/{calorie}', [CaloriesController::class, 'destroy']
-)->name('calories.destroy');
+Route::resource('calories', CaloriesController::class, 
+['parameters' => ['calories' => 'calorie'], 
+'only' => ['store', 'edit', 'update', 'destroy']]);  
 
 // Redirect
 
