@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreCalorieRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use App\models\Calorie;
+use App\Models\Calorie;
 use App\Models\Subject;
 
 class CaloriesController extends Controller
